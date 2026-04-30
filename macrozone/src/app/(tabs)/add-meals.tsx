@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 export default function AddMealsScreen() {
   return (
     <View style={globalStyles.container}>
-      <Text style={globalStyles.title}>Add Mealse</Text>
+      <Text style={globalStyles.title}>Add Meals</Text>
     </View>
   )
 }
