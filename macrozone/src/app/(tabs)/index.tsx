@@ -1,22 +1,16 @@
-import { Text, View, StyleSheet } from "react-native";
-import * as Device from "expo-device"
-import { globalStyles, colors } from "@/styles/global";
 import HomeHeader from "@/components/HomeHeader";
-import { Link } from "expo-router";
+import MacroGrid from "@/components/MacroGrid";
+import { globalStyles } from "@/styles/global";
+import { ScrollView, Text, View } from "react-native";
 
 export default function HomeScreen() {
   return (
-    <View style={globalStyles.container}>
-      <Text style={globalStyles.title}>Macrozone</Text>
-      <Text>{Device.brand}</Text>
+    <ScrollView style={[globalStyles.container, {
+      flex: 1,
+    }]}>
+      <Text style={globalStyles.title}>MacroZone</Text>
       <HomeHeader />
-      <Link href={'/meals'} style={globalStyles.link}>
-        Go to meals
-      </Link>
-      <Link href={'/add-meals'} style={globalStyles.link}>
-        Add Meals
-      </Link>
-    </View>
-  );
+      <MacroGrid />
+    </ScrollView>
+  )
 }
-

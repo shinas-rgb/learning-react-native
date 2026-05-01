@@ -1,6 +1,6 @@
-import { colors } from '@/styles/global';
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { colors } from "@/styles/global";
+import { Tabs } from "expo-router";
+import { Ionicons } from '@expo/vector-icons'
 
 export default function TabLayout() {
   return (
@@ -15,24 +15,33 @@ export default function TabLayout() {
         tabBarInactiveTintColor: colors.textSecondary,
       }}
     >
-      <Tabs.Screen name='index' options={{
-        title: 'Home',
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name='home' size={size} color={color} />
-        )
-      }} />
-      <Tabs.Screen name='meals' options={{
-        title: 'All Meals',
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name='list' size={size} color={color} />
-        )
-      }} />
-      <Tabs.Screen name='add-meals' options={{
-        title: 'Add Meals',
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name='add-circle' size={size} color={color} />
-        )
-      }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='home' size={size} color={color} />
+          )
+        }}
+      />
+      <Tabs.Screen
+        name="add-meals"
+        options={{
+          title: 'Add Meals',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='add-circle' size={size} color={color} />
+          )
+        }}
+      />
+      <Tabs.Screen
+        name="all-meals"
+        options={{
+          title: 'Meals',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='list' size={size} color={color} />
+          )
+        }}
+      />
     </Tabs>
   )
 }
