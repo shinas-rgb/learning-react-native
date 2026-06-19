@@ -3,9 +3,15 @@ import snowImg from "@assets/images/snow.jpg"
 import { Link } from "expo-router";
 import { colors } from "../styles/global";
 import { checkUser } from "../utils/auth.js"
+import { useEffect, useState } from "react";
 
 export default function HomeScreen() {
-  const user = checkUser()
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    checkUser().then(setUser)
+  }, [])
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -14,7 +20,7 @@ export default function HomeScreen() {
         style={styles.image}
       >
         {user ? (
-          <Link href="/auth" asChild>
+          <Link href="profile" asChild>
             <Pressable style={styles.loginButton}>
               <Text style={styles.loginButtonText}>
                 Profile
@@ -22,7 +28,7 @@ export default function HomeScreen() {
             </Pressable>
           </Link>
         ) : (
-          <Link href="/auth" asChild>
+          <Link href="auth" asChild>
             <Pressable style={styles.loginButton}>
               <Text style={styles.loginButtonText}>
                 Log In

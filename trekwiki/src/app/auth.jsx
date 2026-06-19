@@ -202,7 +202,7 @@ export default function LoginPage() {
             <Pressable
               onPress={() => setMode('signup')}>
               <Text style={{ marginLeft: 10, color: colors.blue400, fontFamily: "CanvaSans-Regular" }}>
-                Sign In
+                Sign Up
               </Text>
             </Pressable>
           ) : (

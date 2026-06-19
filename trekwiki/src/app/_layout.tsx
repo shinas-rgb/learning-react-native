@@ -32,8 +32,17 @@ export default function RootLayout() {
       <Stack >
         {/* screenOptions={{ headerShown: false }} */}
         <Stack.Screen name="index" options={{ title: "Home", headerShown: false, }} />
+        <Stack.Screen name="(tabs)" options={{
+          title: "Profile",
+          headerStyle: { backgroundColor: colors.zinc800 },
+          headerTintColor: colors.zinc100
+        }} />
         <Stack.Screen name="explore" options={{
           title: "Explore",
+          headerStyle: { backgroundColor: colors.zinc800 },
+          headerTintColor: colors.zinc100
+        }} />
+        <Stack.Screen name="place/[id]" options={{
           headerStyle: { backgroundColor: colors.zinc800 },
           headerTintColor: colors.zinc100
         }} />
