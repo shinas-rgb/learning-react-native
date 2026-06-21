@@ -3,7 +3,6 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 import { LinearGradient } from "expo-linear-gradient"
 import { Controller, useForm } from "react-hook-form"
 import { useState } from "react";
-import { useToast } from "react-native-toast-notifications";
 import api from "../api/api.js"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "expo-router";
@@ -12,8 +11,8 @@ export default function LoginPage() {
   const { control, handleSubmit, formState: { errors } } = useForm()
   const [mode, setMode] = useState('login')
   const [loading, setLoading] = useState(false)
-  const toast = useToast()
   const navigation = useNavigation()
+  const { success, error } = useAppToast()
 
   async function onSubmit(data) {
     try {
@@ -24,18 +23,7 @@ export default function LoginPage() {
           email: data.email,
           password: data.password
         })
-        toast.show(res.data.message, {
-          type: "custom",
-          style: {
-            backgroundColor: colors.green500,
-            paddingHorizontal: 40,
-            borderRadius: 999,
-          },
-          textStyle: {
-            color: "white",
-            fontFamily: "CanvaSans-Regular"
-          }
-        })
+        success(res.data.message)
         setMode("login")
       }
       if (mode === 'login') {
@@ -43,52 +31,19 @@ export default function LoginPage() {
           email: data.email,
           password: data.password
         })
-        toast.show(res.data.message, {
-          type: "custom",
-          style: {
-            backgroundColor: colors.green500,
-            paddingHorizontal: 40,
-            borderRadius: 999,
-          },
-          textStyle: {
-            color: "white",
-            fontFamily: "CanvaSans-Regular"
-          }
-        })
+        success(res.data.message)
         await AsyncStorage.setItem("token", res.data.data.token)
         navigation.navigate("index")
       }
-    } catch (error) {
-      const message = error.response?.data?.message || "Something went wrong"
-      toast.show(message, {
-        type: "custom",
-        style: {
-          backgroundColor: colors.red500,
-          paddingHorizontal: 40,
-          borderRadius: 999,
-        },
-        textStyle: {
-          color: "white",
-          fontFamily: "CanvaSans-Regular"
-        }
-      })
+    } catch (err) {
+      const message = err.response?.data?.message || "Something went wrong"
+      error(message)
     } finally {
       setLoading(false)
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.email)) {
-      toast.show("Invalid email", {
-        type: "custom",
-        style: {
-          backgroundColor: colors.red500,
-          paddingHorizontal: 40,
-          borderRadius: 999,
-        },
-        textStyle: {
-          color: "white",
-          fontFamily: "CanvaSans-Regular"
-        }
-      })
+      error("Invalid email")
       return;
     }
     if (data.password.length < 4) {

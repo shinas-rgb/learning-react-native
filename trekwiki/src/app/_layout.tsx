@@ -46,6 +46,11 @@ export default function RootLayout() {
           headerStyle: { backgroundColor: colors.zinc800 },
           headerTintColor: colors.zinc100
         }} />
+        <Stack.Screen name="add-place" options={{
+          title: "Add new place",
+          headerStyle: { backgroundColor: colors.zinc800 },
+          headerTintColor: colors.zinc100
+        }} />
         <Stack.Screen name="auth" options={{ title: "Auth", headerShown: false }} />
         <Stack.Screen name="+not-found" options={{
           headerStyle: { backgroundColor: colors.zinc800 },

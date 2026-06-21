@@ -2,16 +2,14 @@ import { FlatList, Overlay, Image, Pressable, StyleSheet, Text, View, Modal } fr
 import React, { useState, useEffect, use } from "react"
 import CustomSearchBar from "./components/SearchBar";
 import { colors } from "@/styles/global";
-import { useToast } from "react-native-toast-notifications";
 import Loading from "./components/Loading";
 import { Ionicons } from '@expo/vector-icons';
 import Pagination from "./components/Pagination";
 import { Link, router } from "expo-router";
 import api from "@/api/api";
-import { Picker } from "@react-native-picker/picker";
+import { useAppToast } from "./hooks/useAppToast";
 
 export default function ExploreScreen() {
-  const toast = useToast()
   const [query, setQuery] = useState("")
   const [search, setSearch] = useState("")
   const [places, setPlaces] = useState([])
@@ -23,22 +21,9 @@ export default function ExploreScreen() {
 
   const [difficulty, setDifficulty] = useState("")
   const [season, setSeason] = useState("")
-  const [district, setDisctrict] = useState("")
+  const { success, error } = useAppToast()
 
   useEffect(() => {
-    // toast.show(search, {
-    //   type: "custom",
-    //   style: {
-    //     backgroundColor: colors.zinc100,
-    //     paddingHorizontal: 40,
-    //     borderRadius: 999,
-    //   },
-    //   textStyle: {
-    //     color: "black",
-    //     fontFamily: "CanvaSans-Regular"
-    //   }
-    // })
-
     const fetchData = async () => {
       try {
         setLoading(true)
@@ -54,9 +39,9 @@ export default function ExploreScreen() {
         setPage(res.data.data.page)
         setTotalPages(res.data.data.totalPages)
         setTotalItems(res.data.data.totalItmes)
-      } catch (error) {
-        const message = error.response?.data?.message || "Something went wrong"
-        console.log(message)
+      } catch (err) {
+        const message = err.response?.data?.message || "Something went wrong"
+        error(message)
       } finally {
         setVisible(false)
         setLoading(false)
@@ -182,7 +167,12 @@ export default function ExploreScreen() {
 
         // pagination
         ListFooterComponent={
-          <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+          <>
+            <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+            <Pressable style={{ marginBottom: 10, marginTop: 20, flexDirection: "row-reverse" }} onPress={() => router.push('add-place')}>
+              <Text style={{ fontFamily: "CanvaSans-Regular", color: colors.blue400, fontSize: 16, }}>Add a missing place</Text>
+            </Pressable>
+          </>
         }
       />
     </>
