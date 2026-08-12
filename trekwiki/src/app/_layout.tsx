@@ -33,7 +33,7 @@ export default function RootLayout() {
         {/* screenOptions={{ headerShown: false }} */}
         <Stack.Screen name="index" options={{ title: "Home", headerShown: false, }} />
         <Stack.Screen name="(tabs)" options={{
-          title: "Profile",
+          title: "Options",
           headerStyle: { backgroundColor: colors.zinc800 },
           headerTintColor: colors.zinc100
         }} />
@@ -48,6 +48,11 @@ export default function RootLayout() {
         }} />
         <Stack.Screen name="add-place" options={{
           title: "Add new place",
+          headerStyle: { backgroundColor: colors.zinc800 },
+          headerTintColor: colors.zinc100
+        }} />
+        <Stack.Screen name="edit-profile" options={{
+          title: "Edit Profile",
           headerStyle: { backgroundColor: colors.zinc800 },
           headerTintColor: colors.zinc100
         }} />

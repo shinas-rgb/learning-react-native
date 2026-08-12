@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { colors } from "../styles/global";
 import { checkUser } from "../utils/auth.js"
 import { useEffect, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const [user, setUser] = useState(null)
@@ -22,9 +23,10 @@ export default function HomeScreen() {
         {user ? (
           <Link href="profile" asChild>
             <Pressable style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>
+              {/* <Text style={styles.loginButtonText}>
                 Profile
-              </Text>
+              </Text> */}
+              <Ionicons name="settings-outline" size={28} color="white"/>
             </Pressable>
           </Link>
         ) : (
@@ -95,15 +97,15 @@ const styles = StyleSheet.create({
     flexDirection: "coloumn",
   },
   loginButton: {
-    backgroundColor: colors.blue400,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 15,
+    // backgroundColor: colors.blue400,
+    // paddingVertical: 10,
+    // paddingHorizontal: 20,
+    // borderRadius: 15,
+    // borderColor: colors.blue500,
+    // borderWidth: 1,
     alignSelf: "flex-end",
-    marginTop: 40,
-    marginRight: 25,
-    borderWidth: 1,
-    borderColor: colors.blue500,
+    marginTop: 50,
+    marginRight: 30,
   },
   loginButtonText: {
     color: "white",

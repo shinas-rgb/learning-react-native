@@ -6,6 +6,7 @@ import { useState } from "react";
 import api from "../api/api.js"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "expo-router";
+import {useAppToast} from "./hooks/useAppToast.js"
 
 export default function LoginPage() {
   const { control, handleSubmit, formState: { errors } } = useForm()
@@ -50,7 +51,6 @@ export default function LoginPage() {
       alert('Password must be at least 8 characters');
       return;
     }
-    console.log(data)
   }
   return (
     <LinearGradient

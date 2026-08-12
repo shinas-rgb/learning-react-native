@@ -27,6 +27,7 @@ export default function PlacePage() {
         setLoading(true)
         const placeRes = await api.get(`/places/${id}`)
         setPlace(placeRes.data.data.place)
+        // console.log(placeRes.data.data.place.images)
 
         const reviewRes = await api.get(`/reviews/${id}`)
         setReviews(reviewRes.data.data)
@@ -347,7 +348,7 @@ export default function PlacePage() {
                       </View>
                     </View>
                     <Text style={{ fontFamily: "CanvaSans-Regular", fontSize: 18, color: colors.zinc200, marginLeft: 10 }}>{review.review}</Text>
-                    {user._id === review.userId && (
+                    {user?._id === review.userId && (
                       <Pressable style={{ flexDirection: "row-reverse" }} onPress={() => deleteReview(review._id)}>
                         <Ionicons name="trash" size={20} color={colors.red500} />
                       </Pressable>
