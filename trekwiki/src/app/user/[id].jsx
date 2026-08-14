@@ -1,72 +1,122 @@
+import { Stack, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import Loading from "../components/Loading";
 import api from "@/api/api";
 import { colors } from "@/styles/global";
-import { useCallback, useState } from "react";
-import { ScrollView, StyleSheet, Text, View, Image, Pressable } from "react-native";
-import Loading from "../components/Loading";
 import { Ionicons } from '@expo/vector-icons';
-import { Link, router, useFocusEffect } from "expo-router";
 
-export default function ProfilePage() {
+import { ScrollView, StyleSheet, Text, View, Image, Pressable } from "react-native";
+import { Link, router, useFocusEffect } from "expo-router";
+import { checkUser } from "@/utils/auth";
+
+export default function UserProfile() {
+  const { id } = useLocalSearchParams()
+  const [userProfile, setUserProfile] = useState(null)
   const [user, setUser] = useState(null)
-  const [reviews, setReviews] = useState([])
   const [places, setPlaces] = useState([])
+  const [reviews, setReviews] = useState([])
   const [option, setOption] = useState("posts")
+  const [followed, setFollowed] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useFocusEffect(
-    useCallback(() => {
+  useEffect(() => {
     const fetchData = async () => {
-      try {
-        const res = await api.get('/users')
-        setUser(res.data.data.user)
-        const reviewRes = await api.get('/reviews')
-        setReviews(reviewRes.data.data)
-        const placeRes = await api.get('/places/user')
-        setPlaces(placeRes.data.data)
-      } catch (error) {
-        const message = error.response?.data?.message || "Something went wrong"
-        console.log(message)
-        console.log(error)
-      } finally {
-        setLoading(false)
+    try {
+      if(!user) {
+        setUser(await checkUser())
       }
-    }
+
+      if(user) {
+        console.log("Yes user")
+        const userRes = await api.get('/users')
+        setUser(userRes.data.data.user)
+        setFollowed(
+          userRes.data.data.user.followings?.some(
+            usr => usr._id === id
+          )
+        )
+      }
+
+      const res = await api.get(`/users/user/profile/${id}`)
+      
+      setUserProfile(res.data.data.filteredUser)
+      setPlaces(res.data.data.filteredPlaces)
+      setReviews(res.data.data.filteredReviews)
+
+    } catch (error) {
+      const message = error.response?.data?.message || "Something went wrong"
+      console.log(error)
+      console.log(message)
+    } finally {
+      setLoading(false)
+    }}
     fetchData()
   }, [])
-)
 
-  if (loading) {
+  const manageUser = async () => {
+    try {
+      if(!followed) {
+        if(!user) {
+          return router.push(`/auth`)
+        }
+      setLoading(true)
+        const res = await api.post(`/users/follow/${id}`)
+        setUser(res.data.data.user)
+        setUserProfile(res.data.data.targetUser)
+        setFollowed(true)
+      } else {
+        const res = await api.delete(`/users/unfollow/${id}`)
+        setUser(res.data.data.user)
+        setUserProfile(res.data.data.targetUser)
+        setFollowed(false)
+      }
+      setLoading(false)
+    } catch (error) {
+      const message = error.response?.data?.message || "Something went wrong"
+      console.log(message)
+      console.log(error)
+    }
+  }
+
+  if(loading) {
     return <Loading />
   }
+
   return (
+      <>
+      <Stack.Screen
+        options={{
+          title: userProfile.name
+        }}
+      />
     <ScrollView style={styles.container}>
       <View style={styles.profileCard}>
-        <Image source={{ uri: user.image.url}} style={styles.imageStyle} />
-        <Text style={styles.boldText}>{user.name}</Text>
-        <Text style={styles.paraText}>{user.bio}</Text>
+        <Image source={{ uri: userProfile.image.url}} style={styles.imageStyle} />
+        <Text style={styles.boldText}>{userProfile.name}</Text>
+        <Text style={styles.paraText}>{userProfile.bio}</Text>
         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           <View style={{ flexDirection: "column" }}>
             <Text style={styles.boldNumText}>{reviews.length}</Text>
             <Text style={styles.regularNumText}>Posts</Text>
           </View>
           <View style={{ flexDirection: "column" }}>
-            <Text style={styles.boldNumText}>{user.totalFollowers}</Text>
+            <Text style={styles.boldNumText}>{userProfile.totalFollowers}</Text>
           <Link href={{
             pathname: `/user/following`,
             params: {
-              id: user._id,
-              opt: "followers"
+              id,
+              opt: "followers",
             }
           }}>
             <Text style={styles.regularNumText}>Followers</Text>
-            </Link>
+          </Link>
           </View>
           <View style={{ flexDirection: "column" }}>
-            <Text style={styles.boldNumText}>{user.totalFollowings}</Text>
+            <Text style={styles.boldNumText}>{userProfile.totalFollowings}</Text>
           <Link href={{
             pathname: `/user/following`,
             params: {
-              id: user._id,
+              id,
               opt: "following"
             }
           }}>
@@ -75,21 +125,24 @@ export default function ProfilePage() {
           </View>
         </View>
         <View style={{flexDirection: "row", justifyContent: "space-between", gap: 10, paddingHorizontal: 20,}}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: pressed ? colors.zinc700 : colors.zinc600 }
-          ]}>
-          <Text style={styles.paraText}>Your Activity</Text>
-        </Pressable>
-        <Pressable onPress={() => router.push(`/edit-profile`)}
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: pressed ? colors.blue600 : colors.blue500 }
-          ]}>
-          <Text style={styles.paraText}>Edit Profile</Text>
-        </Pressable>
-        </View>
+            {followed ? (
+              <Pressable onPress={() => manageUser()}
+                style={({ pressed }) => [
+                  styles.button,
+                  { backgroundColor: pressed ? colors.blue600 : colors.blue500 }
+                ]}>
+                <Text style={styles.paraText}>Unfollow</Text>
+              </Pressable>
+            ) : (
+              <Pressable onPress={() => manageUser()}
+                style={({ pressed }) => [
+                  styles.button,
+                  { backgroundColor: pressed ? colors.blue600 : colors.blue500 }
+                ]}>
+                <Text style={styles.paraText}>Follow</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
 
         <View style={{flexDirection: "row", justifyContent: "space-around"}}>
@@ -124,7 +177,7 @@ export default function ProfilePage() {
                   <Text style={{
                     color: colors.zinc300,
                     fontFamily: "CanvaSans-Bold"
-                  }}>{review.placeTitle}</Text>
+                  }}>{review.placeName}</Text>
                   <Text style={{
                     color: colors.zinc400,
                     fontFamily: "CanvaSans-Regular"
@@ -172,6 +225,7 @@ export default function ProfilePage() {
         </View>
       </View>
     </ScrollView>
+      </>
   )
 }
 

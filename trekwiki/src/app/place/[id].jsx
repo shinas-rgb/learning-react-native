@@ -1,12 +1,13 @@
 import { colors } from "@/styles/global";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import Loading from "../components/Loading";
 import { Ionicons } from '@expo/vector-icons';
 import api from "@/api/api";
 import { Controller, useForm } from "react-hook-form";
-import { useToast } from "react-native-toast-notifications";
+import { useAppToast } from "../hooks/useAppToast";
+import { checkUser } from "@/utils/auth";
 
 export default function PlacePage() {
   const { id } = useLocalSearchParams()
@@ -17,38 +18,46 @@ export default function PlacePage() {
   const [isBook, setIsBook] = useState(false)
   const [isRev, setIsRev] = useState(false)
   const [user, setUser] = useState(null)
+  const [createdBy, setCreatedBy] = useState(null)
   const [newReview, setNewReview] = useState(null)
   const { control, handleSubmit, formState: { errors } } = useForm()
-  const toast = useToast()
+    const defaultImg = "https://res.cloudinary.com/dyqumsdla/image/upload/v1786527430/hike_uploads/uo37wvuqsquyasoh6m0w.jpg" 
+const {success, error} = useAppToast()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
+        if(!user){
+          const usr = await checkUser()
+          setUser(await checkUser())
+        }
+
         const placeRes = await api.get(`/places/${id}`)
         setPlace(placeRes.data.data.place)
-        // console.log(placeRes.data.data.place.images)
+        setCreatedBy(placeRes.data.data.createdUser.user)
+        setReviews(placeRes.data.data.reviews)
 
-        const reviewRes = await api.get(`/reviews/${id}`)
-        setReviews(reviewRes.data.data)
+        if (user) {
+          const userRes = await api.get('/users')
+          setUser(userRes.data.data.user)
 
-        const userRes = await api.get('/users')
-        setUser(userRes.data.data.user)
-
-        setIsBook(
-          userRes.data.data.user.bookmarks?.some(
-            b => b === id || b._id === id
+          setIsBook(
+            userRes.data.data.user.bookmarks?.some(
+              b => b === id || b._id === id
+            )
           )
-        )
 
-        setIsRev(
-          reviewRes.data.data.some(b => b.userId === userRes.data.data.user._id ? true : false)
-        )
+          setIsRev(
+            placeRes.data.data.reviews.some(b => b.userId === userRes.data.data.user._id ? true : false)
+          )
+        }
+        setLoading(false)
       } catch (error) {
         const message = error.response?.data?.message || "Something went wrong"
         console.log(message)
+        console.log(error)
       } finally {
-        setLoading(false)
       }
     }
     fetchData()
@@ -60,49 +69,16 @@ export default function PlacePage() {
         const res = await api.post(`users/bookmarks/remove/${id}`)
         setUser(res.data.data)
         setIsBook(false)
-        toast.show(res.data.message, {
-          type: "custom",
-          style: {
-            backgroundColor: colors.green500,
-            paddingHorizontal: 40,
-            borderRadius: 999,
-          },
-          textStyle: {
-            color: "white",
-            fontFamily: "CanvaSans-Regular"
-          }
-        })
+      success(res.data.message)
       } else {
         const res = await api.post(`users/bookmarks/add/${id}`)
         setUser(res.data.data)
         setIsBook(true)
-        toast.show(res.data.message, {
-          type: "custom",
-          style: {
-            backgroundColor: colors.green500,
-            paddingHorizontal: 40,
-            borderRadius: 999,
-          },
-          textStyle: {
-            color: "white",
-            fontFamily: "CanvaSans-Regular"
-          }
-        })
+      success(res.data.message)
       }
-    } catch (error) {
-      const message = error.response?.data?.message || "Something went wrong"
-      toast.show(message, {
-        type: "custom",
-        style: {
-          backgroundColor: colors.red500,
-          paddingHorizontal: 40,
-          borderRadius: 999,
-        },
-        textStyle: {
-          color: "white",
-          fontFamily: "CanvaSans-Regular"
-        }
-      })
+    } catch (err) {
+      const message = err.response?.data?.message || "Something went wrong"
+    error(message)
     }
   }
 
@@ -114,32 +90,10 @@ export default function PlacePage() {
         review: data.review,
       })
       setNewReview(res.data.data)
-      toast.show(res.data.message, {
-        type: "custom",
-        style: {
-          backgroundColor: colors.green500,
-          paddingHorizontal: 40,
-          borderRadius: 999,
-        },
-        textStyle: {
-          color: "white",
-          fontFamily: "CanvaSans-Regular"
-        }
-      })
-    } catch (error) {
-      const message = error.response?.data?.message || "Something went wrong"
-      toast.show(message, {
-        type: "custom",
-        style: {
-          backgroundColor: colors.red500,
-          paddingHorizontal: 40,
-          borderRadius: 999,
-        },
-        textStyle: {
-          color: "white",
-          fontFamily: "CanvaSans-Regular"
-        }
-      })
+    success(res.data.message)
+    } catch (err) {
+      const message = err.response?.data?.message || "Something went wrong"
+    error(message)
     }
   }
 
@@ -149,18 +103,7 @@ export default function PlacePage() {
       const placeId = (place._id)
       const res = await api.delete(`/reviews/${placeId}`)
       setNewReview(res.data.data)
-      toast.show(res.data.message, {
-        type: "custom",
-        style: {
-          backgroundColor: colors.green500,
-          paddingHorizontal: 40,
-          borderRadius: 999,
-        },
-        textStyle: {
-          color: "white",
-          fontFamily: "CanvaSans-Regular"
-        }
-      })
+    success(res.data.message)
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong"
       console.log(message)
@@ -177,7 +120,7 @@ export default function PlacePage() {
     <>
       <Stack.Screen
         options={{
-          title: place.title
+          title: place?.title
         }}
       />
       <ScrollView style={styles.container}>
@@ -271,6 +214,31 @@ export default function PlacePage() {
           </View>
         )}
 
+        {/* Author */}
+        <View>
+          <Text style={{
+            fontFamily: "CanvaSans-Bold",
+            color: colors.zinc100,
+            fontSize: 18
+          }} >Author :</Text>
+          <Pressable onPress={() =>
+            user?._id === createdBy._id  
+            ? router.push(`/profile`)
+            : router.push(`/user/${createdBy._id}`)
+          }
+           style={({pressed}) => [{flexDirection: "row", gap: 20, marginVertical: 10, marginLeft: 10, padding: 10,
+            backgroundColor: pressed ? colors.zinc300 : colors.zinc200, borderRadius: 10,
+          }]}>
+            <Image source={{uri: createdBy.image.url || defaultImg}} style={{objectFit: "cover", width: 40, height: 40, borderRadius: 150}} />
+            <Text style={{
+            fontFamily: "CanvaSans-Regular",
+            color: colors.zinc950,
+            fontSize: 18,
+            marginTop: 10,
+            }}>{createdBy.name || "User"}</Text>
+          </Pressable>
+        </View>
+
         <View style={{
           backgroundColor: colors.zinc800, paddingTop: 20, borderRadius: 10, paddingHorizontal: 10,
           borderWidth: 1, borderColor: colors.zinc700, marginVertical: 20
@@ -339,7 +307,9 @@ export default function PlacePage() {
                     borderRadius: 10, flexDirection: "column", gap: 8
                   }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Link href={`/user/${review.userId}`}>
                       <Text style={{ fontFamily: "CanvaSans-Bold", fontSize: 18, color: colors.zinc100 }}>{review.userName || "Anonymous"}</Text>
+                  </Link>
                       <View style={{ flexDirection: "row", gap: 5 }}>
                         <Text style={{ fontFamily: "CanvaSans-Regular", color: colors.zinc100, fontSize: 18 }}>
                           {review.rating}
