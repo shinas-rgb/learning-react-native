@@ -1,14 +1,16 @@
 import { colors } from "@/styles/global";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfilePage() {
+  const {logout} = useAuth()
   const navigation = useNavigation()
   const toast = useToast()
 
-  async function logout() {
+  async function logOut() {
     await AsyncStorage.removeItem("token")
     toast.show("Logout successful", {
       type: "custom",
@@ -22,11 +24,12 @@ export default function ProfilePage() {
         fontFamily: "CanvaSans-Regular"
       }
     })
-    navigation.navigate("index")
+    logout()
+    router.replace('/test')
   }
   return (
     <View style={styles.container}>
-      <Pressable onPress={logout}
+      <Pressable onPress={logOut}
         style={({ pressed }) => [
           styles.button,
           { backgroundColor: pressed ? colors.red500 : colors.red600 }]}>

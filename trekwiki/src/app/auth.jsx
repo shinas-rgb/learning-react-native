@@ -5,14 +5,15 @@ import { Controller, useForm } from "react-hook-form"
 import { useState } from "react";
 import api from "../api/api.js"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useNavigation } from "expo-router";
+import { router} from "expo-router";
 import {useAppToast} from "./hooks/useAppToast.js"
+import { useAuth } from "./context/AuthContext.jsx";
 
 export default function LoginPage() {
+  const {login} = useAuth()
   const { control, handleSubmit, formState: { errors } } = useForm()
   const [mode, setMode] = useState('login')
   const [loading, setLoading] = useState(false)
-  const navigation = useNavigation()
   const { success, error } = useAppToast()
 
   async function onSubmit(data) {
@@ -34,7 +35,8 @@ export default function LoginPage() {
         })
         success(res.data.message)
         await AsyncStorage.setItem("token", res.data.data.token)
-        navigation.navigate("index")
+        login(res.data.data.user)
+        router.replace("/")
       }
     } catch (err) {
       const message = err.response?.data?.message || "Something went wrong"

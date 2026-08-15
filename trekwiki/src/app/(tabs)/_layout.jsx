@@ -6,20 +6,56 @@ export default function ProfileLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerStyle: {
+          backgroundColor: colors.zinc900,
+        },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontFamily: "Alpino-Bold",
+          fontSize: 30,
+        },
+        headerTitleAlign: "center",
         tabBarStyle: {
-          backgroundColor: colors.zinc800,
-          borderColor: colors.zinc600
-        }
+          backgroundColor: colors.zinc900,
+          borderColor: colors.zinc800,
+        height: 88,
+        },
+        tabBarActiveTintColor: colors.blue400,
+        tabBarShowLabel: false,
       }}
     >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "TREK WIKI",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={size}
+              color={color}
+            />
+          ),
+        }} />
+
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: "Explore",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "search" : "search-outline"}
+              size={size}
+              color={color}
+            />
+          ),
+        }} />
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "person-circle" : "person-circle-outline"}
+              name={focused ? "person" : "person-outline"}
               size={size}
               color={color}
             />

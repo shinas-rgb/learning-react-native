@@ -9,6 +9,8 @@ import { ScrollView, StyleSheet, Text, View, Image, Pressable } from "react-nati
 import { Link, router, useFocusEffect } from "expo-router";
 import { checkUser } from "@/utils/auth";
 
+// fix followed
+
 export default function UserProfile() {
   const { id } = useLocalSearchParams()
   const [userProfile, setUserProfile] = useState(null)
@@ -16,18 +18,13 @@ export default function UserProfile() {
   const [places, setPlaces] = useState([])
   const [reviews, setReviews] = useState([])
   const [option, setOption] = useState("posts")
-  const [followed, setFollowed] = useState(null)
+  const [followed, setFollowed] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
     try {
-      if(!user) {
-        setUser(await checkUser())
-      }
-
-      if(user) {
-        console.log("Yes user")
+      if(await checkUser()) {
         const userRes = await api.get('/users')
         setUser(userRes.data.data.user)
         setFollowed(

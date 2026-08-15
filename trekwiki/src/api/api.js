@@ -2,7 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.1.3:8080/api"
+  baseURL: "http://192.168.1.6:8080/api"
+  // baseURL: "http://192.168.1.84:8080/api"
   // baseURL: "https://project-hiking.onrender.com/api"
 })
 
