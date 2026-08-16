@@ -127,7 +127,7 @@ export default function UserProfile() {
               />
             </View>
             <Link href={`/place/${post.place._id}`} style={styles.text}>
-              <Text>Place: {post.place.title || "None"}</Text>
+              <Text>{post.place.title || "None"}</Text>
             </Link>
           </View>
         </View>
@@ -344,6 +344,7 @@ const styles = StyleSheet.create({
     borderColor: colors.zinc800,
     borderRadius: 10,
     paddingBottom: 10,
+    marginBottom: 15,
   },
   headPost: {
     flexDirection: "row",
