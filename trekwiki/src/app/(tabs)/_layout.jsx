@@ -129,6 +129,14 @@ export default function ProfileLayout() {
               color={color}
             />
           ),
+          headerRight: () => (
+            <Pressable onPress={() => router.push(`/settings`)}
+            style={{
+              marginRight: 20,
+            }}>
+            <Ionicons name="settings" size={30} color={colors.zinc300}/>
+            </Pressable>
+          )
         }} />
     </Tabs>
     </>
