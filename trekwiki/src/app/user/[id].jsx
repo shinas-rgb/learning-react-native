@@ -191,7 +191,7 @@ export default function UserProfile() {
               <Text style={styles.paraText}>{userProfile.bio}</Text>
               <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                 <View style={{ flexDirection: "column" }}>
-                  <Text style={styles.boldNumText}>{reviews.length}</Text>
+                  <Text style={styles.boldNumText}>{posts.length}</Text>
                   <Text style={styles.regularNumText}>Posts</Text>
                 </View>
                 <View style={{ flexDirection: "column" }}>
