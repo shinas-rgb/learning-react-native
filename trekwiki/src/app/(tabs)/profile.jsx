@@ -21,22 +21,22 @@ export default function ProfilePage() {
   //     fetchData()
   //   }, [])
   // )
-      const fetchData = async () => {
-        try {
-          const res = await api.get('/users')
-          setUserProfile(res.data.data.user)
-          const reviewRes = await api.get('/reviews')
-          setReviews(reviewRes.data.data)
-          const placeRes = await api.get('/places/user')
-          setPlaces(placeRes.data.data)
-        } catch (error) {
-          const message = error.response?.data?.message || "Something went wrong"
-          console.log(message)
-          console.log(error)
-        } finally {
-          setLoading(false)
-        }
-      }
+  const fetchData = async () => {
+    try {
+      const res = await api.get('/users')
+      setUserProfile(res.data.data.user)
+      const reviewRes = await api.get('/reviews')
+      setReviews(reviewRes.data.data)
+      const placeRes = await api.get('/places/user')
+      setPlaces(placeRes.data.data)
+    } catch (error) {
+      const message = error.response?.data?.message || "Something went wrong"
+      console.log(message)
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function loadPosts() {
     try {
@@ -136,7 +136,7 @@ export default function ProfilePage() {
          <Text style={styles.paraText}>{userProfile.bio}</Text>
          <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
            <View style={{ flexDirection: "column" }}>
-             <Text style={styles.boldNumText}>{reviews.length}</Text>
+             <Text style={styles.boldNumText}>{posts.length}</Text>
              <Text style={styles.regularNumText}>Posts</Text>
            </View>
            <View style={{ flexDirection: "column" }}>
