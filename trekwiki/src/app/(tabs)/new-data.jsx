@@ -6,7 +6,6 @@ import { colors } from "@/styles/global"
 
 export default function NewDataScreen() {
   const {type} = useLocalSearchParams()
-  console.log("type: " + type)
   return (
     <View style={styles.container}>
     {type === "post" && <AddPostScreen />}
