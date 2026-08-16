@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Image, FlatList, ActivityIndicator, Dimensions } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image, FlatList, ActivityIndicator, Dimensions, Pressable } from "react-native";
 import { colors } from "../../styles/global";
 import { useCallback, useEffect, useState } from "react";
 import Loading from "../components/Loading";
@@ -81,6 +81,39 @@ export default function HomeScreen() {
     }
   }
 
+  const likePost = async (post) => {
+    try {
+      const res = await api.post(`/posts/like/${post._id}`)
+      setPosts((prev) => 
+      prev.map((p) => p._id === post._id ? {
+        ...p,
+         likedBy: [...(p.likedBy || []), user.id]
+        } : p))
+    } catch (error) {
+      console.error(error)
+      const message = error.response?.data?.message || "Something went wrong"
+      console.log(message)
+    } finally {
+    }
+  }
+
+  const unlikePost = async (post) => {
+    try {
+      const res = await api.delete(`/posts/unlike/${post._id}`)
+      setPosts((prev) => 
+        prev.map((p) => 
+      p._id === post._id ? {
+        ...p, 
+        likedBy: (p.likedBy || []).filter((id) => id !== user.id),
+      } : p))
+    } catch (error) {
+      console.error(error)
+      const message = error.response?.data?.message || "Something went wrong"
+      console.log(message)
+    } finally {
+    }
+  }
+
   function PostCard({ post }) {
     return (
       <View style={styles.postCardContainer}>
@@ -127,8 +160,20 @@ export default function HomeScreen() {
               />
             </View>
             <Link href={`/place/${post.place._id}`}>
-            <Text style={styles.text}>Place: {post.place.title || "None"}</Text>
+              <Text style={styles.text}>Place: {post.place.title || "None"}</Text>
             </Link>
+            <View>
+              {post.likedBy?.includes(user.id) ? (
+                <Pressable onPress={() => unlikePost(post)}>
+                  <Ionicons name="heart" size={28} color={colors.red500} />
+                </Pressable>
+              ) : (
+                <Pressable onPress={() => likePost(post)}>
+                  <Ionicons name="heart-outline" size={28} color={colors.red500} />
+                </Pressable>
+              )}
+              <Text style={styles.text}>{post.likedBy.length} Likes</Text>
+            </View>
           </View>
         </View>
       </View>
