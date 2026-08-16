@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingBottom: 8,
     borderBottomWidth: 1,
+    borderColor: colors.zinc800,
   },
   postUserName: {
     fontFamily: "CanvaSans-Bold",
