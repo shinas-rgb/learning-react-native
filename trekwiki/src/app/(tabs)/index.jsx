@@ -5,10 +5,12 @@ import Loading from "../components/Loading";
 import api from "@/api/api";
 import { Link, useFocusEffect } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from "../context/AuthContext";
 
 // craeate a post model and apis
 
 export default function HomeScreen() {
+  const {user} = useAuth()
   const [posts, setPosts] = useState([])
   const [cursor, setCursor] = useState(null)
   const [hasMore, setHasMore] = useState(true)
@@ -75,7 +77,7 @@ export default function HomeScreen() {
               height: 30,
               borderRadius: 150,
             }} />
-            <Link href={`/user/${post.author._id}`} style={styles.postUserName}>
+            <Link href={user.id === post.author._id ? `/profile` : `/user/${post.author._id}`} style={styles.postUserName}>
               <Text>{post.author.name || "User"}</Text>
             </Link>
           </View>
@@ -124,7 +126,6 @@ export default function HomeScreen() {
 
   return (
     <FlatList
-      // style={styles.postCardContainer}
       refreshing={refreshing}
       onRefresh={onRefresh}
       style={styles.container}
@@ -135,7 +136,7 @@ export default function HomeScreen() {
         <PostCard post={item}/>
         </View>
       )}
-      onEndReached={loadPosts}
+      onEndReached={onRefresh}
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         loading ? <ActivityIndicator /> : null
