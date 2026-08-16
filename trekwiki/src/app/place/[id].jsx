@@ -35,7 +35,7 @@ const {success, error} = useAppToast()
 
         const placeRes = await api.get(`/places/${id}`)
         setPlace(placeRes.data.data.place)
-        setCreatedBy(placeRes.data.data.createdUser.user)
+        setCreatedBy(placeRes.data.data.place.createdBy)
         setReviews(placeRes.data.data.reviews)
 
         if (user) {
@@ -235,7 +235,7 @@ const {success, error} = useAppToast()
             color: colors.zinc950,
             fontSize: 18,
             marginTop: 10,
-            }}>{createdBy.name || "User"}</Text>
+            }}>{createdBy?.name || "User"}</Text>
           </Pressable>
         </View>
 
@@ -307,9 +307,17 @@ const {success, error} = useAppToast()
                     borderRadius: 10, flexDirection: "column", gap: 8
                   }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                  <Link href={`/user/${review.userId}`}>
-                      <Text style={{ fontFamily: "CanvaSans-Bold", fontSize: 18, color: colors.zinc100 }}>{review.userName || "Anonymous"}</Text>
-                  </Link>
+                      <View style={{flexDirection: "row", gap: 10,}}>
+                        <Image source={{ uri: review.userId.image.url }} style={{
+                          objectFit: "cover",
+                          width: 30,
+                          height: 30,
+                          borderRadius: 150,
+                        }} />
+                        <Link href={`/user/${review.userId._id}`} style={{marginTop: 5}}>
+                          <Text style={{ fontFamily: "CanvaSans-Bold", fontSize: 18, color: colors.zinc100, }}>{review.userId.name || "Anonymous"}</Text>
+                        </Link>
+                      </View>
                       <View style={{ flexDirection: "row", gap: 5 }}>
                         <Text style={{ fontFamily: "CanvaSans-Regular", color: colors.zinc100, fontSize: 18 }}>
                           {review.rating}
