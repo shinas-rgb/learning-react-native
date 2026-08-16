@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
   search: {
     height: 45,
     marginHorizontal: 30,
-    backgroundColor: colors.zinc700,
+    backgroundColor: colors.zinc800,
     borderWidth: 1,
-    borderColor: colors.zinc500,
+    borderColor: colors.zinc600,
   }
 })
