@@ -48,8 +48,8 @@ function Navigation() {
         headerStyle: { backgroundColor: colors.zinc800 },
         headerTintColor: colors.zinc100
       }} />
-      <Stack.Screen name="add-place" options={{
-        title: "Add new place",
+      <Stack.Screen name="settings" options={{
+        title: "Settings",
         headerStyle: { backgroundColor: colors.zinc800 },
         headerTintColor: colors.zinc100
       }} />
