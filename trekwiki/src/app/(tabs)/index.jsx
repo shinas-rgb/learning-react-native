@@ -13,7 +13,7 @@ export default function HomeScreen() {
   const [cursor, setCursor] = useState(null)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(true)
-  const [currentIntex, setCurrentIntex] = useState(0)
+  const [refreshing, setRefreshing] = useState(false)
   const defaultImg =  "https://res.cloudinary.com/dyqumsdla/image/upload/v1786527430/hike_uploads/uo37wvuqsquyasoh6m0w.jpg"
   const { width } = Dimensions.get("window");
   const courosalWidth = width - 44
@@ -52,11 +52,17 @@ export default function HomeScreen() {
     }
   }
 
-  useFocusEffect(
-    useCallback(() => {
+  useEffect(() => {
       loadPosts()
     }, [])
-  )
+
+    const onRefresh = async () => {
+      setRefreshing(true)
+
+      await loadPosts()
+
+      setRefreshing(false)
+    }
 
   function PostCard({ post }) {
     return (
@@ -119,6 +125,8 @@ export default function HomeScreen() {
   return (
     <FlatList
       // style={styles.postCardContainer}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
       style={styles.container}
       data={posts}
       keyExtractor={item => item._id}
