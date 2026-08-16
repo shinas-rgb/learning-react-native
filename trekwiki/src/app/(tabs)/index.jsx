@@ -21,11 +21,11 @@ export default function HomeScreen() {
   const courosalWidth = width - 44
   
   const loadPosts = async () => {
-      if(!hasMore) {
-        return
-      }
+    if (!hasMore) {
+      return
+    }
 
-      setLoading(true)
+    setLoading(true)
     try {
       const params = new URLSearchParams({
         limit: "20"
@@ -55,16 +55,31 @@ export default function HomeScreen() {
   }
 
   useEffect(() => {
-      loadPosts()
-    }, [])
+    loadPosts()
+  }, [])
 
-    const onRefresh = async () => {
-      setRefreshing(true)
+  const onRefresh = async () => {
+      setLoading(true)
+    try {
+      const params = new URLSearchParams({
+        limit: "20"
+      })
 
-      await loadPosts()
+      const res = await api.get(`/posts?${params.toString()}`)
 
-      setRefreshing(false)
+      setPosts(res.data.data.posts)
+
+      setCursor(res.data.data.nextCursor)
+      setHasMore(res.data.data.hasMore)
+
+    } catch (error) {
+      console.log(error)
+      const message = error.response?.data?.message || "Something went wrong"
+      console.log(message)
+    } finally {
+      setLoading(false)
     }
+  }
 
   function PostCard({ post }) {
     return (
@@ -126,8 +141,6 @@ export default function HomeScreen() {
 
   return (
     <FlatList
-      refreshing={refreshing}
-      onRefresh={onRefresh}
       style={styles.container}
       data={posts}
       keyExtractor={item => item._id}
@@ -136,11 +149,13 @@ export default function HomeScreen() {
         <PostCard post={item}/>
         </View>
       )}
-      onEndReached={onRefresh}
+      onEndReached={loadPosts}
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         loading ? <ActivityIndicator /> : null
       }
+      refreshing={refreshing}
+      onRefresh={onRefresh}
     />
   )
 }
