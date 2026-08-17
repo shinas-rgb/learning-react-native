@@ -34,13 +34,11 @@ export default function ProfilePage() {
       console.log(message)
       console.log(error)
     } finally {
-      setLoading(false)
     }
   }
 
   async function loadPosts() {
     try {
-      setLoading(true)
       if (!hasMore) {
         return
       }
