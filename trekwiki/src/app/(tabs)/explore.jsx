@@ -26,7 +26,6 @@ export default function ExploreScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true)
         const res = await api.get(`/places/`, {
           params: {
             page,
@@ -45,7 +44,7 @@ export default function ExploreScreen() {
         console.log(err)
         console.log(message)
       } finally {
-        setVisible(false)
+        // setVisible(false)
         setLoading(false)
       }
     }
