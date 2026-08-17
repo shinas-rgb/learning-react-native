@@ -27,7 +27,6 @@ export default function UserProfile() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      console.log("IN fetchData")
       if (await checkUser()) {
         const userRes = await api.get('/users')
         setUser(userRes.data.data.user)
@@ -39,8 +38,6 @@ export default function UserProfile() {
       }
 
       const res = await api.get(`/users/user/profile/${id}`)
-      console.log("userProfile")
-      console.log(res.data.data.filteredUser)
       setUserProfile(res.data.data.filteredUser)
 
       // setUserProfile(res.data.data.filteredUser)
@@ -57,11 +54,8 @@ export default function UserProfile() {
   }
 
   async function loadPosts() {
-    console.log("User Profile")
-    console.log(userProfile)
     try {
       setLoading(true)
-      console.log("IN loadPost")
       if (!hasMore) {
         return
       }
@@ -76,8 +70,6 @@ export default function UserProfile() {
       }
 
       const postRes = await api.get(`/posts/user?${params.toString()}`)
-      console.log("posts: ")
-      console.log(postRes.data.data.posts)
 
       setPosts(prev => [
         ...prev,
@@ -141,7 +133,6 @@ export default function UserProfile() {
         if (!user) {
           return router.push(`/auth`)
         }
-        setLoading(true)
         const res = await api.post(`/users/follow/${id}`)
         setUser(res.data.data.user)
         setUserProfile(res.data.data.targetUser)
@@ -152,7 +143,6 @@ export default function UserProfile() {
         setUserProfile(res.data.data.targetUser)
         setFollowed(false)
       }
-      setLoading(false)
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong"
       console.log(message)
